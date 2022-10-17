@@ -1,0 +1,64 @@
+# program for approximating a line from a set of points given as input by user
+# 17.10.2022
+
+def get_coordinates(prompt=""):
+    # Function that returns two lists of floats given by the user
+    x_list = []
+    y_list = []
+    while True:
+        user_input = input(prompt)
+        if user_input == "":
+            return x_list, y_list
+        split = user_input.find(",")
+        x = float(user_input[:split].strip())
+        y = float(user_input[split+1:].strip())
+        x_list.append(x)
+        y_list.append(y)
+
+
+def angle(x0, y0, x1, y1):
+    # Function for calculating the angle between two points on a plane
+    x0, y0, x1, y1 = float(x0), float(y0), float(x1), float(y1)
+    rise = y1 - y0
+    run = x1 - x0
+    return rise/run
+
+
+def average(list):
+    # Calculate the mean average value of a given list of floats
+    list_len = len(list)
+    mean = 0.0
+    for i in range(list_len):
+        mean += list[i]/float(list_len)
+    return mean
+
+
+def main():
+
+    x_list, y_list = get_coordinates()
+    list_length = len(x_list)
+    angle_list = []
+    # Add all angles between consecutive points to a list
+    for j in range(list_length-1):
+        for i in range(j+1, list_length):
+            alpha = angle(x_list[j], y_list[j], x_list[i], y_list[i])
+            angle_list.append(alpha)
+    # Calculate the average angle
+    mean_angle = average(angle_list)
+    mean_x = average(x_list)
+    mean_y = average(y_list)
+    # Calculate the y value at x = 0 given by m*(x-x0)=(y-y0)
+    # y - y0 = mx - mx0
+    # y = mx + [ y0 - mx0 ]
+    y_at_xzero = mean_y-mean_angle*mean_x
+    # Print resulting straight line equation
+    if y_at_xzero > 0:
+        print(f"y = {mean_angle}x + {y_at_xzero:.3f}")
+    elif y_at_xzero < 0:
+        print(f"y = {mean_angle}x - {abs(y_at_xzero):.3f}")
+    else:
+        print(f"y = {mean_angle}x")
+
+
+if __name__ == "__main__":
+    main()
